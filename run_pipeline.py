@@ -17,7 +17,8 @@ def send_telegram(message):
         print("⚠️ 텔레그램 토큰 또는 Chat ID가 설정되지 않아 알림 전송을 건너뜁니다.")
         return
 
-    url = f"[https://api.telegram.org/bot](https://api.telegram.org/bot){TELEGRAM_BOT_TOKEN}/sendMessage"
+    # 순수 URL 주소 지정 (마크다운 괄호 제거)
+    url = "[https://api.telegram.org/bot](https://api.telegram.org/bot)" + str(TELEGRAM_BOT_TOKEN) + "/sendMessage"
     payload = {
         "chat_id": TELEGRAM_CHAT_ID,
         "text": message,
@@ -42,7 +43,7 @@ def run_main_script():
 
 
 def run_aider_auto_debug(error_log):
-    """오류 발생 시 aider를 비대화형(Non-interactive) 모드로 호출하여 코드 자동 수정 및 보고서 작성"""
+    """오류 발생 시 aider를 비대화형 모드로 호출하여 코드 자동 수정 및 보고서 작성"""
     prompt = f"""
 [자동 디버그 요청]
 '{MAIN_SCRIPT}' 실행 중 다음 오류가 발생했습니다.
@@ -57,10 +58,11 @@ def run_aider_auto_debug(error_log):
 2. 에러 원인, 수정 사항, 재발 방지책을 정리하여 '{REPORT_FILE}' 파일에 상세한 Markdown 보고서로 작성하세요.
 """
 
-    # --file 옵션을 제거하고 파일명을 직접 인자로 전달 및 모델명 변경
+    # --yes 옵션을 추가하여 프롬프트 질문 자동 승인 처리
     cmd = [
         "aider",
         "--model", "gemini/gemini-3.7-flash",
+        "--yes",
         MAIN_SCRIPT,
         REPORT_FILE,
         "--message", prompt,
