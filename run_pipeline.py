@@ -18,8 +18,8 @@ def send_telegram(message):
         print("⚠️ 텔레그램 토큰 또는 Chat ID가 설정되지 않아 알림 전송을 건너뜁니다.")
         return
 
-    # 순수 f-string으로 URL 구성 (마크다운 대괄호 방지)
-    url = f"[https://api.telegram.org/bot](https://api.telegram.org/bot){TELEGRAM_BOT_TOKEN}/sendMessage"
+    # 순수 문자열 결합으로 URL 구성
+    url = "[https://api.telegram.org/bot](https://api.telegram.org/bot)" + str(TELEGRAM_BOT_TOKEN) + "/sendMessage"
     payload = {
         "chat_id": TELEGRAM_CHAT_ID,
         "text": message,
@@ -59,11 +59,10 @@ def run_aider_auto_debug(error_log):
 2. 에러 원인, 수정 사항, 재발 방지책을 정리하여 '{REPORT_FILE}' 파일에 상세한 Markdown 보고서로 작성하세요.
 """
 
-    # aider 명령어 작성 (--api-key 및 --yes 명시)
+    # aider v0.18.0 호환 명령어 (유효하지 않은 --api-key 인자 제거)
     cmd = [
         "aider",
         "--model", "gemini/gemini-3.7-flash",
-        "--api-key", f"gemini={GEMINI_API_KEY}",
         "--yes",
         MAIN_SCRIPT,
         REPORT_FILE,
@@ -73,7 +72,7 @@ def run_aider_auto_debug(error_log):
 
     print("\n🤖 [Pipeline] 스크립트 오류 발생! aider를 실행하여 자동 디버깅을 시작합니다...")
     
-    # 환경변수 전달
+    # 프로세스 환경변수로 API 키 전달
     env = os.environ.copy()
     if GEMINI_API_KEY:
         env["GEMINI_API_KEY"] = GEMINI_API_KEY
