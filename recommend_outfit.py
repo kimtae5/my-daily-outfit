@@ -17,8 +17,15 @@ def get_weather():
     if not OPENWEATHER_API_KEY:
         raise ValueError("OPENWEATHER_API_KEY 환경변수가 설정되지 않았습니다.")
 
-    url = f"[https://api.openweathermap.org/data/2.5/weather?q=](https://api.openweathermap.org/data/2.5/weather?q=){CITY_NAME}&appid={OPENWEATHER_API_KEY}&units=metric&lang=kr"
-    response = requests.get(url, timeout=10)
+    # 순수 URL 문자열 생성
+    base_url = "[https://api.openweathermap.org/data/2.5/weather](https://api.openweathermap.org/data/2.5/weather)"
+    params = {
+        "q": CITY_NAME,
+        "appid": OPENWEATHER_API_KEY,
+        "units": "metric",
+        "lang": "kr"
+    }
+    response = requests.get(base_url, params=params, timeout=10)
 
     if response.status_code != 200:
         raise RuntimeError(f"날씨 API 호출 실패 (상태 코드: {response.status_code})")
@@ -98,7 +105,7 @@ def send_telegram(message):
     if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
         raise ValueError("텔레그램 API 설정이 올바르지 않습니다.")
 
-    url = f"[https://api.telegram.org/bot](https://api.telegram.org/bot){TELEGRAM_BOT_TOKEN}/sendMessage"
+    url = "[https://api.telegram.org/bot](https://api.telegram.org/bot)" + str(TELEGRAM_BOT_TOKEN) + "/sendMessage"
     payload = {
         "chat_id": TELEGRAM_CHAT_ID,
         "text": message,
