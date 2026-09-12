@@ -8,7 +8,6 @@ TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 MAIN_SCRIPT = "recommend_outfit.py"
 REPORT_FILE = "debug_report.md"
 
-# 마크다운 문맥 파싱 오류 방지용 백틱 변수
 BT3 = "```"
 
 
@@ -58,12 +57,12 @@ def run_aider_auto_debug(error_log):
 2. 에러 원인, 수정 사항, 재발 방지책을 정리하여 '{REPORT_FILE}' 파일에 상세한 Markdown 보고서로 작성하세요.
 """
 
-    # LiteLLM 포맷으로 Gemini API 모델 지정
+    # --file 옵션을 제거하고 파일명을 직접 인자로 전달 및 모델명 변경
     cmd = [
         "aider",
-        "--model", "gemini/gemini-2.5-flash",
-        "--file", MAIN_SCRIPT,
-        "--file", REPORT_FILE,
+        "--model", "gemini/gemini-3.7-flash",
+        MAIN_SCRIPT,
+        REPORT_FILE,
         "--message", prompt,
         "--no-auto-commits"
     ]
@@ -100,7 +99,6 @@ def main():
                 f"오류 내용:\n{BT3}text\n{error_msg[:1000]}\n{BT3}"
             )
 
-        # GitHub Actions 단계에서 파이프라인 실패를 인지할 수 있도록 Exit Code 1 반환
         sys.exit(1)
 
 
