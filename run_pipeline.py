@@ -18,8 +18,8 @@ def send_telegram(message):
         print("⚠️ 텔레그램 토큰 또는 Chat ID가 설정되지 않아 알림 전송을 건너뜁니다.")
         return
 
-    # 순수 문자열 결합으로 URL 구성
-    url = "[https://api.telegram.org/bot](https://api.telegram.org/bot)" + str(TELEGRAM_BOT_TOKEN) + "/sendMessage"
+    # 순수 f-string 형식으로 URL 생성 (대괄호 제거)
+    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
     payload = {
         "chat_id": TELEGRAM_CHAT_ID,
         "text": message,
