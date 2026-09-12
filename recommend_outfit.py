@@ -61,7 +61,7 @@ def load_clothes_images():
     for path in image_paths:
         try:
             img = Image.open(path)
-            images.append((os.path.basename(path), img))
+            images.append((os.basename(path), img))
         except Exception as e:
             print(f"이미지 로드 실패 ({path}): {e}")
 
@@ -85,7 +85,7 @@ def get_outfit_recommendation(weather_info, clothes_images):
 1. 제공된 옷 사진들을 분석하여 종류, 색상, 계절감을 파악해 줘.
 2. 오늘 날씨와 온도, 최신 패션 트렌드에 맞는 착장 조합(상의, 하의, 아우터 등)을 추천해 줘.
 3. 추천 이유를 기온 변화와 스타일 측면에서 친절하게 설명해 줘.
-4. 답변은 텔레그램 메시지로 바로 전송할 수 있게 깔끔하고 읽기 편한 Markdown 형식으로 작성해 줘.
+4. 텔레그램 전송용 메시지이므로, 특수문자나 복잡한 마크다운 기호 사용을 자제하고 깔끔하고 읽기 편하게 작성해 줘.
 """
 
     contents = [prompt]
@@ -106,12 +106,21 @@ def send_telegram(message):
         raise ValueError("텔레그램 API 설정이 올바르지 않습니다.")
 
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+
+    # 1차 시도: Markdown 파싱 전송
     payload = {
         "chat_id": TELEGRAM_CHAT_ID,
         "text": message,
         "parse_mode": "Markdown",
     }
     res = requests.post(url, json=payload, timeout=10)
+
+    # 마크다운 구문 오류(400 Bad Request) 발생 시 parse_mode를 제거하여 일반 텍스트로 재시도
+    if res.status_code == 400 and "can't parse entities" in res.text:
+        print("⚠️ 텔레그램 마크다운 파싱 오류 발생. 일반 텍스트 모드로 재시도합니다.")
+        payload.pop("parse_mode")
+        res = requests.post(url, json=payload, timeout=10)
+
     if res.status_code != 200:
         raise RuntimeError(f"텔레그램 전송 실패: {res.text}")
 
