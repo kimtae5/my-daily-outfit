@@ -9,6 +9,8 @@ on:
 jobs:
   run-outfit-pipeline:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # GitHub Actions 봇에 커밋/푸시 쓰기 권한 부여
 
     steps:
       - name: Checkout Repository
