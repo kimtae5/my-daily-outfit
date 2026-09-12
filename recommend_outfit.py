@@ -17,7 +17,7 @@ def get_weather():
     if not OPENWEATHER_API_KEY:
         raise ValueError("OPENWEATHER_API_KEY 환경변수가 설정되지 않았습니다.")
 
-    url = f"https://api.openweathermap.org/data/2.5/weather?q={CITY_NAME}&appid={OPENWEATHER_API_KEY}&units=metric&lang=kr"
+    url = f"[https://api.openweathermap.org/data/2.5/weather?q=](https://api.openweathermap.org/data/2.5/weather?q=){CITY_NAME}&appid={OPENWEATHER_API_KEY}&units=metric&lang=kr"
     response = requests.get(url, timeout=10)
 
     if response.status_code != 200:
@@ -62,7 +62,7 @@ def load_clothes_images():
 
 
 def get_outfit_recommendation(weather_info, clothes_images):
-    """Gemini 2.5 Flash를 활용하여 날씨와 사진 기반 착장 추천받기"""
+    """Gemini 3.7 Flash를 활용하여 날씨와 사진 기반 착장 추천받기"""
     client = genai.Client(api_key=GEMINI_API_KEY)
 
     prompt = f"""
@@ -87,7 +87,7 @@ def get_outfit_recommendation(weather_info, clothes_images):
         contents.append(img)
 
     response = client.models.generate_content(
-        model="gemini-2.5-flash", contents=contents
+        model="gemini-3.7-flash", contents=contents
     )
 
     return response.text
@@ -98,7 +98,7 @@ def send_telegram(message):
     if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
         raise ValueError("텔레그램 API 설정이 올바르지 않습니다.")
 
-    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+    url = f"[https://api.telegram.org/bot](https://api.telegram.org/bot){TELEGRAM_BOT_TOKEN}/sendMessage"
     payload = {
         "chat_id": TELEGRAM_CHAT_ID,
         "text": message,
