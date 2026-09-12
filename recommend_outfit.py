@@ -18,7 +18,7 @@ def get_weather():
         raise ValueError("OPENWEATHER_API_KEY 환경변수가 설정되지 않았습니다.")
 
     # 순수 URL 문자열 생성
-    base_url = "[https://api.openweathermap.org/data/2.5/weather](https://api.openweathermap.org/data/2.5/weather)"
+    base_url = "https://api.openweathermap.org/data/2.5/weather"
     params = {
         "q": CITY_NAME,
         "appid": OPENWEATHER_API_KEY,
@@ -61,7 +61,7 @@ def load_clothes_images():
     for path in image_paths:
         try:
             img = Image.open(path)
-            images.append((os.basename(path), img))
+            images.append((os.path.basename(path), img))
         except Exception as e:
             print(f"이미지 로드 실패 ({path}): {e}")
 
