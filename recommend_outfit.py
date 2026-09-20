@@ -69,23 +69,24 @@ def load_clothes_images():
 
 
 def get_outfit_recommendation(weather_info, clothes_images):
-    """Gemini 3.7 Flash를 활용하여 날씨와 사진 기반 착장 추천받기"""
     client = genai.Client(api_key=GEMINI_API_KEY)
 
     prompt = f"""
-너는 패션 감각이 뛰어난 퍼스널 스타일리스트야.
-오늘의 날씨 정보와 보유 중인 옷 사진들을 바탕으로 최적의 코디를 추천해 줘.
+너는 퍼스널 스타일리스트야. 
+[엄격한 제약조건]
+1. 아래 첨부된 옷 사진에 있는 옷들로만 코디를 구성해야 해.
+2. 추천하는 상의, 하의, 아우터 등 각 아이템마다 **어떤 이미지 파일(예: `파일명: shirt1.jpg`)에서 가져온 것인지 파일명을 반드시 정확히 명시**해 줘.
+3. 사진에 없는 새로운 옷을 임의로 만들어내서 추천하지 마.
 
 [오늘의 날씨]
 - 도시: {weather_info['city']}
 - 현재 기온: {weather_info['temp']}°C (최저 {weather_info['temp_min']}°C / 최고 {weather_info['temp_max']}°C)
 - 날씨 상태: {weather_info['description']}
 
-[지시 사항]
-1. 제공된 옷 사진들을 분석하여 종류, 색상, 계절감을 파악해 줘.
-2. 오늘 날씨와 온도, 최신 패션 트렌드에 맞는 착장 조합(상의, 하의, 아우터 등)을 추천해 줘.
-3. 추천 이유를 기온 변화와 스타일 측면에서 친절하게 설명해 줘.
-4. 텔레그램 전송용 메시지이므로, 특수문자나 복잡한 마크다운 기호 사용을 자제하고 깔끔하고 읽기 편하게 작성해 줘.
+[출력 형식 예시]
+- 상의: [파일명: top_blue.jpg] 파란색 셔츠
+- 하의: [파일명: pants_black.jpg] 검은색 슬랙스
+- 추천 이유: ...
 """
 
     contents = [prompt]
@@ -94,7 +95,7 @@ def get_outfit_recommendation(weather_info, clothes_images):
         contents.append(img)
 
     response = client.models.generate_content(
-        model="gemini-3.7-flash", contents=contents
+        model="gemini-3.5-flash-lite", contents=contents
     )
 
     return response.text
