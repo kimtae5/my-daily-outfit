@@ -44,7 +44,6 @@ def run_main_script():
 
 
 def run_aider_auto_debug(error_log):
-    """오류 발생 시 aider를 비대화형 모드로 호출하여 코드 자동 수정 및 보고서 작성"""
     prompt = f"""
 [자동 디버그 요청]
 '{MAIN_SCRIPT}' 실행 중 다음 오류가 발생했습니다.
@@ -59,10 +58,10 @@ def run_aider_auto_debug(error_log):
 2. 에러 원인, 수정 사항, 재발 방지책을 정리하여 '{REPORT_FILE}' 파일에 상세한 Markdown 보고서로 작성하세요.
 """
 
-    # aider v0.18.0 호환 명령어 (유효하지 않은 --api-key 인자 제거)
+    # --openai-api-key 대신 GEMINI_API_KEY를 명시적으로 환경변수에 매핑
     cmd = [
         "aider",
-        "--model", "gemini/gemini-3.7-flash",
+        "--model", "gemini/gemini-3.5-flash-lite",
         "--yes",
         MAIN_SCRIPT,
         REPORT_FILE,
@@ -71,11 +70,12 @@ def run_aider_auto_debug(error_log):
     ]
 
     print("\n🤖 [Pipeline] 스크립트 오류 발생! aider를 실행하여 자동 디버깅을 시작합니다...")
-    
-    # 프로세스 환경변수로 API 키 전달
+
     env = os.environ.copy()
     if GEMINI_API_KEY:
         env["GEMINI_API_KEY"] = GEMINI_API_KEY
+        # aider가 OpenAI 키를 요구하는 오류 방지용
+        env["OPENAI_API_KEY"] = GEMINI_API_KEY 
 
     subprocess.run(cmd, env=env)
 
